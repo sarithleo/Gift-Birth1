@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Birthday Gift For(Amma)</title>
+  <style>
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0f1724}
+    .card{width:520px;background:#0b1220;border-radius:16px;padding:40px;box-shadow:0 8px 40px rgba(2,6,23,0.7);display:flex;flex-direction:column;align-items:center}
+    .inputs{display:flex;gap:20px;width:100%;justify-content:center}
+    .digit{width:80px;height:100px;text-align:center;font-size:48px;color:#e6eef8;background:transparent;border:2px solid rgba(255,255,255,0.2);border-radius:12px}
+    button{margin-top:30px;padding:20px 28px;border-radius:16px;border:0;background:#60a5fa;color:#04263b;font-weight:700;cursor:pointer;font-size:24px;width:100%}
+    .result{padding:20px;border-radius:16px;margin-top:30px;font-weight:600;font-size:24px;text-align:center;width:100%}
+    .result.success{background:rgba(16,185,129,0.12);color:#10b981}
+    .result.fail{background:rgba(239,68,68,0.12);color:#ef4444}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="inputs">
+      <input class="digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+      <input class="digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+      <input class="digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+      <input class="digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    </div>
+    <button id="btnCheck">CHECK</button>
+    <div id="message" class="result" style="display:none" role="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    // Fixed code set to 2461
+    const currentCode = "2461";
+
+    const inputs=document.querySelectorAll('.digit');
+    const btnCheck=document.getElementById('btnCheck');
+    const msg=document.getElementById('message');
+
+    function showMessage(text,ok){
+      msg.textContent=text;
+      msg.className='result '+(ok?'success':'fail');
+      msg.style.display='block';
+    }
+
+    function hideMessage(){msg.style.display='none';}
+
+    inputs.forEach((input,idx)=>{
+      input.addEventListener('input',e=>{
+        e.target.value=e.target.value.replace(/[^0-9]/g,'').slice(0,1);
+        hideMessage();
+        if(e.target.value && idx<inputs.length-1){
+          inputs[idx+1].focus();
+        }
+      });
+      input.addEventListener('keydown',e=>{
+        if(e.key==='Backspace' && !input.value && idx>0){
+          inputs[idx-1].focus();
+        }
+        if(e.key==='Enter') btnCheck.click();
+      });
+    });
+
+    btnCheck.addEventListener('click',()=>{
+      const value=Array.from(inputs).map(i=>i.value||'').join('');
+      if(!/^[0-9]{4}$/.test(value)){
+        showMessage('ENTER 4 DIGITS',false);
+        return;
+      }
+      if(value===currentCode)showMessage('CHECK THE SIDE OF THE PC  (KEY)',true);
+      else showMessage('INCORRECT',false);
+    });
+
+    window.addEventListener('keydown',e=>{if(e.key==='Enter'&&!Array.from(inputs).includes(document.activeElement))e.preventDefault();});
+  </script>
+</body>
+</html>
